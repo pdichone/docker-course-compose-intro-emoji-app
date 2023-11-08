@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  web:
+    container_name: emoji-frontend
+    build: .
+    ports:
+      - "8000:5000"
+    depends_on:
+      - redis
+    environment:
+      - FLASK_ENV=dev
+
+  redis:
+    container_name: redis-db-backend
+    image: "redis:alpine"
