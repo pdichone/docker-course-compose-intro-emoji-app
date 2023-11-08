@@ -9,7 +9,7 @@ services:
     depends_on:
       - redis
     environment:
-      - FLASK_ENV=dev
+      - FLASK_ENV=development
 
   redis:
     container_name: redis-db-backend
