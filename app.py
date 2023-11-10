@@ -24,7 +24,7 @@ def index():
 # This is all for Beanstalk deployment
 @app.route("/health")
 def health():
-    return jsonify({"status": 200})
+    return "OK", 200
 
 
 @app.route("/emojis")
