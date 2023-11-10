@@ -1,0 +1,47 @@
+name: Docker Compose CI/CD to Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build with Docker Compose
+      run: docker-compose -f docker-compose.yml build
+
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
+    
+    - name: Deploy to Elastic Beanstalk
+      # if: github.ref == 'refs/heads/main' && success()
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: us-west-2
+        application_name: emoji-tester
+        environment_name: Emoji-tester-env
+        version_label: ${{ github.run_number }}-${{ github.sha }}
+        deployment_package: deploy.zip
+
