@@ -34,7 +34,6 @@ jobs:
       run: zip -r deploy.zip . -x '*.git*'
     
     - name: Deploy to Elastic Beanstalk
-      # if: github.ref == 'refs/heads/main' && success()
       uses: einaregilsson/beanstalk-deploy@v21
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
